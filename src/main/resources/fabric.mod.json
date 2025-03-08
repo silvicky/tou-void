@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "tou-void",
+	"version": "${version}",
+	"name": "Escape from Void",
+	"description": "Use totem of undying to escape the void!",
+	"authors": [
+		"Vicky Silviana"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/trade-unleash/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.silvicky.tou.Tou"
+		]
+	},
+	"mixins": [
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
