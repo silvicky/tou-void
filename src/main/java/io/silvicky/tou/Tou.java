@@ -45,8 +45,8 @@ public class Tou implements ModInitializer {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION,900,0));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION,100,0));
                     player.getServerWorld().spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,player.getX(),player.getY(),player.getZ(),1,0,0,0,0);
-                    if(player.getInventory().getMainHandStack().getItem()==Items.TOTEM_OF_UNDYING)
-                        player.getInventory().setStack(player.getInventory().selectedSlot,ItemStack.EMPTY);
+                    if(player.getInventory().getStack(player.getInventory().getSelectedSlot()).getItem()==Items.TOTEM_OF_UNDYING)
+                        player.getInventory().setStack(player.getInventory().getSelectedSlot(),ItemStack.EMPTY);
                     else player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT,ItemStack.EMPTY);
                 }
             }
@@ -54,7 +54,7 @@ public class Tou implements ModInitializer {
     }
     public boolean hasTotem(ServerPlayerEntity player)
     {
-        return player.getInventory().getMainHandStack().getItem()==Items.TOTEM_OF_UNDYING
+        return player.getInventory().getStack(player.getInventory().getSelectedSlot()).getItem()==Items.TOTEM_OF_UNDYING
                 ||player.getInventory().getStack(PlayerInventory.OFF_HAND_SLOT).getItem()==Items.TOTEM_OF_UNDYING;
     }
     public boolean isOutOfWorld(ServerPlayerEntity player)
