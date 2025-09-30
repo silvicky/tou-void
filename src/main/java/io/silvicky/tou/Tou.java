@@ -2,17 +2,13 @@ package io.silvicky.tou;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.component.type.DeathProtectionComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
 import org.slf4j.Logger;
@@ -34,9 +30,9 @@ public class Tou implements ModInitializer {
                 if((!player.isSpectator())&&isOutOfWorld(player)&&hasTotem(player))
                 {
                     TeleportTarget target=new TeleportTarget(
-                            player.getWorld(),
+                            player.getEntityWorld(),
                             new Vec3d(player.getX(),
-                                    player.getWorld().getTopYInclusive(),
+                                    player.getEntityWorld().getTopYInclusive(),
                                     player.getZ()),new Vec3d(0,0,0),0,0,TeleportTarget.NO_OP);
                     player.teleportTo(target);
                     player.clearStatusEffects();
@@ -44,7 +40,7 @@ public class Tou implements ModInitializer {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE,800,0));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION,900,0));
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION,100,0));
-                    player.getWorld().spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,player.getX(),player.getY(),player.getZ(),1,0,0,0,0);
+                    player.getEntityWorld().spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,player.getX(),player.getY(),player.getZ(),1,0,0,0,0);
                     if(player.getInventory().getStack(player.getInventory().getSelectedSlot()).getItem()==Items.TOTEM_OF_UNDYING)
                         player.getInventory().setStack(player.getInventory().getSelectedSlot(),ItemStack.EMPTY);
                     else player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT,ItemStack.EMPTY);
@@ -59,6 +55,6 @@ public class Tou implements ModInitializer {
     }
     public boolean isOutOfWorld(ServerPlayerEntity player)
     {
-        return player.getWorld().getBottomY()-player.getY()>32;
+        return player.getEntityWorld().getBottomY()-player.getY()>32;
     }
 }
