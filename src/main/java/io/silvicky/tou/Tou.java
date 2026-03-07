@@ -2,15 +2,15 @@ package io.silvicky.tou;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.portal.TeleportTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,36 +25,36 @@ public class Tou implements ModInitializer {
         LOGGER.info("Loading TouVoid...");
         ServerTickEvents.START_WORLD_TICK.register((id)->
         {
-            for(ServerPlayerEntity player:id.getPlayers())
+            for(ServerPlayer player:id.players())
             {
                 if((!player.isSpectator())&&isOutOfWorld(player)&&hasTotem(player))
                 {
-                    TeleportTarget target=new TeleportTarget(
-                            player.getEntityWorld(),
-                            new Vec3d(player.getX(),
-                                    player.getEntityWorld().getTopYInclusive(),
-                                    player.getZ()),new Vec3d(0,0,0),0,0,TeleportTarget.NO_OP);
-                    player.teleportTo(target);
-                    player.clearStatusEffects();
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,1200,0));
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE,800,0));
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION,900,0));
-                    player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION,100,0));
-                    player.getEntityWorld().spawnParticles(ParticleTypes.TOTEM_OF_UNDYING,player.getX(),player.getY(),player.getZ(),1,0,0,0,0);
-                    if(player.getInventory().getStack(player.getInventory().getSelectedSlot()).getItem()==Items.TOTEM_OF_UNDYING)
-                        player.getInventory().setStack(player.getInventory().getSelectedSlot(),ItemStack.EMPTY);
-                    else player.getInventory().setStack(PlayerInventory.OFF_HAND_SLOT,ItemStack.EMPTY);
+                    TeleportTransition target=new TeleportTransition(
+                            player.level(),
+                            new Vec3(player.getX(),
+                                    player.level().getMaxY(),
+                                    player.getZ()),new Vec3(0,0,0),0,0, TeleportTransition.DO_NOTHING);
+                    player.teleport(target);
+                    player.removeAllEffects();
+                    player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,1200,0));
+                    player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE,800,0));
+                    player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,900,0));
+                    player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,100,0));
+                    player.level().sendParticles(ParticleTypes.TOTEM_OF_UNDYING,player.getX(),player.getY(),player.getZ(),1,0,0,0,0);
+                    if(player.getInventory().getItem(player.getInventory().getSelectedSlot()).getItem()== Items.TOTEM_OF_UNDYING)
+                        player.getInventory().setItem(player.getInventory().getSelectedSlot(), ItemStack.EMPTY);
+                    else player.getInventory().setItem(Inventory.SLOT_OFFHAND, ItemStack.EMPTY);
                 }
             }
         });
     }
-    public boolean hasTotem(ServerPlayerEntity player)
+    public boolean hasTotem(ServerPlayer player)
     {
-        return player.getInventory().getStack(player.getInventory().getSelectedSlot()).getItem()==Items.TOTEM_OF_UNDYING
-                ||player.getInventory().getStack(PlayerInventory.OFF_HAND_SLOT).getItem()==Items.TOTEM_OF_UNDYING;
+        return player.getInventory().getItem(player.getInventory().getSelectedSlot()).getItem()== Items.TOTEM_OF_UNDYING
+                ||player.getInventory().getItem(Inventory.SLOT_OFFHAND).getItem()== Items.TOTEM_OF_UNDYING;
     }
-    public boolean isOutOfWorld(ServerPlayerEntity player)
+    public boolean isOutOfWorld(ServerPlayer player)
     {
-        return player.getEntityWorld().getBottomY()-player.getY()>32;
+        return player.level().getMinY()-player.getY()>32;
     }
 }
