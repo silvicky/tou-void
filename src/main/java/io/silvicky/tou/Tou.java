@@ -23,7 +23,7 @@ public class Tou implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Loading TouVoid...");
-        ServerTickEvents.START_WORLD_TICK.register((id)->
+        ServerTickEvents.START_LEVEL_TICK.register((id)->
         {
             for(ServerPlayer player:id.players())
             {
